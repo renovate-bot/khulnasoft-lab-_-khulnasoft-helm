@@ -1,0 +1,7 @@
+.idea/
+.vscode/
+server/charts
+server/subcharts
+server/Chart.lock
+*.tgz
+.DS_Store
