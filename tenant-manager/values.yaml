@@ -1,0 +1,212 @@
+# Specifies the secret data for imagePullSecrets needed to fetch the private docker images
+imageCredentials:
+  create: false
+  name: khulnasoft-registry-secret # example
+  repositoryUriPrefix: "registry.khulnasoft.com" # for dockerhub - "docker.io"
+  registry: "registry.khulnasoft.com" #REQUIRED only if create is true, for dockerhub - "index.docker.io/v1/"
+  username: ""
+  password: ""
+
+clusterRole:
+  roleRef: ""
+
+#Please specify k8s platform acronym. Allowed values are aks, eks, gke, openshift, tkg, tkgi, k8s
+# aks = Azure Kubernetes Service
+# gke = Google kubernetes Engine
+# openshift = RedHat Openshift/OCP
+# tkg = VMware Tanzu kubernetes Grid
+# tkgi = VMware Tanzu kubernetes Grid Integrated Edition
+# k8s = Plain/on-prem Vanilla Kubernetes
+platform: ""
+
+admin:
+  token: ""
+  password: ""
+
+db:
+  external:
+    enabled: false
+    name: ""
+    host: ""
+    port: ""
+    user: ""
+    password: ""
+    auditName: ""
+    auditHost: ""
+    auditPort: ""
+    auditUser: ""
+    auditPassword: ""
+  passwordFromSecret:
+    #Enable if loading passwords for db and audit-db from secret
+    enabled: false
+    #Specify the Password Secret name used for db password
+    dbPasswordName: ""
+    #Specify the db password key name stored in the #dbPasswordName secret
+    dbPasswordKey: ""
+    #Specify the Password Secret name used for audit db password
+    dbAuditPasswordName: ""
+    #Specify the Password Secret name used for audit db password
+    dbAuditPasswordKey: ""
+
+  securityContext:
+    runAsUser: 70
+    runAsGroup: 70
+    fsGroup: 11433
+  container_securityContext:
+    privileged: false
+
+  image:
+    repository: database
+    tag: "2022.4"
+    pullPolicy: Always
+
+  service:
+    type: ClusterIP
+
+  persistence:
+    enabled: true
+    storageClass:
+    size: 30Gi
+    accessMode: ReadWriteOnce
+
+  livenessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+    periodSeconds: 10
+    successThreshold: 1
+    tcpSocket:
+      port: 5432
+  readinessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+    periodSeconds: 10
+    successThreshold: 1
+    tcpSocket:
+      port: 5432
+
+  resources: {}
+    # Note: For recommendations please check the official sizing guide.
+    # requests:
+    #   cpu: 3000m
+    #   memory: 6Gi
+    # limits:
+    #   cpu: 12000m
+    #   memory: 20Gi
+
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podAnnotations: {}
+  #  my-annotation-key: my value; more value
+
+  # extraEnvironmentVars is a list of extra environment variables to set in the database deployments.
+  extraEnvironmentVars: {}
+    # ENV_NAME: value
+
+  # extraSecretEnvironmentVars is a list of extra environment variables to set in the database deployments.
+  # These variables take value from existing Secret objects.
+  extraSecretEnvironmentVars: []
+    # - envName: ENV_NAME
+    #   secretName: name
+    #   secretKey: key
+
+tenantmanager:
+  replicaCount: 1
+  logLevel:
+
+  image:
+    repository: tenantmanager
+    tag: "2022.4"
+    pullPolicy: Always
+
+  service:
+    type: LoadBalancer
+    annotations: {}
+    # Note: Please change the ports according to the requirement.
+    ports:
+      - name: khulnasoft-tenantmanager
+        port: 8081
+        targetPort: 8081
+        nodePort:
+        protocol: TCP
+      - name: khulnasoft-tenantmanager-ssl
+        port: 443
+        targetPort: 8444
+        nodePort:
+        protocol: TCP
+    #As 443, 8443 already occupied in k3s kubernetes by traefik ingress. below are the console ports
+    k3sPorts:
+      - name: khulnasoft-tenantmanager
+        port: 8081
+        targetPort: 8081
+        nodePort:
+        protocol: TCP
+      - name: khulnasoft-tenantmanager-ssl
+        port: 444
+        targetPort: 8444
+        nodePort:
+        protocol: TCP
+
+  # default liveness and readiness probe
+  livenessProbe:
+    httpGet:
+      path: /
+      port: 8081
+    initialDelaySeconds: 60
+    periodSeconds: 30
+
+  readinessProbe:
+    httpGet:
+      path: /
+      port: 8081
+    initialDelaySeconds: 60
+    periodSeconds: 30
+
+  resources: {}
+    # Note: For recommendations please check the official sizing guide.
+    # requests:
+    #   cpu: 2000m
+    #   memory: 3Gi
+    # limits:
+    #   cpu: 6000m
+    #   memory: 10Gi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podAnnotations: {}
+  #  my-annotation-key: my value; more value
+
+  securityContext:
+    runAsUser: 11431
+    runAsGroup: 11433
+    fsGroup: 11433
+  container_securityContext: {}
+
+  TLS:
+    # change to true for enabling secure communication
+    enabled: false
+    #created certs secret name for web
+    secretName: ""
+    #Follow Advance configuration for mTLS communication establishment and place your certs in /opt/khulnasoft/ssl/
+
+  maintenance_db:
+    #Specifies the name of a maintenance database, to be used in place of the default postgres DB.
+    #It will define the environment variable AQUA_MAINTENANCE_DBNAME
+    name: ""
+
+  # extraEnvironmentVars is a list of extra environment variables to set in the tenantmanager deployments.
+  # https://docs.khulnasoft.com/docs/server-optional-variables
+  extraEnvironmentVars: {}
+    # ENV_NAME: value
+    #Example for mTLS env variables:
+    #AQUA_PUBLIC_KEY: "/opt/khulnasoft/ssl/<file_name>"
+    #AQUA_PRIVATE_KEY: "/opt/khulnasoft/ssl/<file_name>"
+
+  # extraSecretEnvironmentVars is a list of extra environment variables to set in the tenantmanager deployments.
+  # These variables take value from existing Secret objects.
+  extraSecretEnvironmentVars: []
+    # - envName: ENV_NAME
+    #   secretName: name
+    #   secretKey: key

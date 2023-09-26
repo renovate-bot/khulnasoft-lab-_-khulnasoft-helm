@@ -1,0 +1,32 @@
+{{- if empty .Values.global.connectServerUrl }}
+{{ fail "Error - missing .Values.global.connectServerUrl" }}
+{{- end }}
+{{- if empty .Values.global.scanServerUrl }}
+{{ fail "Error - missing .Values.global.scanServerUrl" }}
+{{- end }}
+{{- if empty .Values.global.khulnasoftServerUrl }}
+{{ fail "Error - missing .Values.global.khulnasoftServerUrl" }}
+{{- end }}
+{{- if empty .Values.global.cspmServerUrl }}
+{{ fail "Error - missing .Values.global.cspmServerUrl" }}
+{{- end }}
+{{- if .Values.credentials.createSecret  }}
+{{- if empty .Values.credentials.khulnasoft_key }}
+{{ fail "Error - missing .Values.credentials.khulnasoft_key" }}
+{{- end }}
+{{- if  empty .Values.credentials.khulnasoft_secret}}
+{{ fail "Error - missing .Values.credentials.khulnasoft_secret" }}
+{{- end }}
+{{- end }}
+{{- if empty .Values.integration.url }}
+{{ fail "Error - missing .Values.integration.url" }}
+{{- end }}
+{{- if empty .Values.integration.username }}
+{{ fail "Error - missing .Values.integration.username" }}
+{{- end }}
+{{- if empty .Values.integration.password }}
+{{ fail "Error - missing .Values.integration.password" }}
+{{- end }}
+{{- if empty .Values.integration.source }}
+{{ fail "Error - missing .Values.integration.source" }}
+{{- end }}

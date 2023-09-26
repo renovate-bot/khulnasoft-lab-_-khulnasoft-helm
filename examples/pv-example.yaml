@@ -1,0 +1,14 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: khulnasoft-db-pv
+  labels:
+    type: local
+spec:
+  storageClassName: khulnasoft-storage
+  capacity:
+    storage: 30Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/var/lib/khulnasoft/data/database/"

@@ -1,0 +1,129 @@
+# Specifies the secret data for imagePullSecrets needed to fetch the private docker images
+imageCredentials:
+  create: false
+  name: khulnasoft-registry-secret ## When create is false please specify
+  repositoryUriPrefix: registry.khulnasoft.com # for dockerhub - "docker.io"
+  registry: registry.khulnasoft.com #REQUIRED only if create is true, for dockerhub - "index.docker.io/v1/"
+  username: ""
+  password: ""
+
+serviceaccount:
+  create: false
+  name: khulnasoft-sa
+
+image:
+  repository: "khulnasoft-cloud-connector"
+  tag: "2022.4"
+  pullPolicy: "Always"
+
+replicaCount: 1
+
+securityContext:
+  runAsUser: 11431
+  runAsGroup: 11433
+  fsGroup: 11433
+
+container_securityContext:
+  privileged: false
+
+gateway:
+  host: "khulnasoft-gateway-svc.khulnasoft"   # Gateway Host Address
+  port: "8443"               # Gateway Port
+
+# Cloud-Connector can authenticate using 2 ways, Token_based authentication and User/Password
+authType:
+  tokenAuth: true     # Boolean Value(true/false) to enable/disable token based authentication
+  userCreds: false    # Boolean Value(true/false) to enable/disable user/password authentication
+
+## Token-based authentication
+# Add plain text value of cloud connector token generated from khulnasoft ui
+token: ""
+# ( or )
+# To load token from existing secret
+tokenFromSecret:
+  enable: false
+  secretName: ""
+  tokenKey: ""
+
+## User/Password authentication
+# creates username and password secret using below provided pain-text values.
+userCreds:
+  username: ""      # Add plain text value of the Khulnasoft username
+  password: ""      # Add plain text value of the Khulnasoft password
+# ( or )
+# To load username and password from existing secret
+userCredsFromSecret:
+  enable: false
+  secretName: ""
+  userkey: ""
+  passwordKey: ""
+
+healthPort:
+  port: "8080"     # default is 8080
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  successThreshold: 1
+  failureThreshold: 10
+
+resources: {}
+  # Note: For recommendations please check the official sizing guide.
+  # requests:
+  #   cpu: 500m
+  #   memory: 0.5Gi
+  # limits:
+  #   cpu: 2000m
+  #   memory: 2Gi
+
+# change it to "1" to enable tls_verify b/w Gateway and Cloud-Connector
+tls_verify:
+  value: "0"
+
+# nodeSelector -- Allows to schedule Khulnasoft Cloud Connector on specific nodes
+nodeSelector: {}
+# tolerations -- Allows to schedule Khulnasoft Cloud Connector on tainted nodes
+tolerations: []
+# affinity -- Allows to specify affinity for Khulnasoft Cloud Connector PODs
+affinity: {}
+# podAnnotations -- Allows setting additional annotations for Khulnasoft Cloud Connector PODs
+podAnnotations: {}
+
+# The variables could be provided via values.yaml file as shown below
+# or using cli command, for example:  --set extraEnvironmentVars.http_proxy="1.1.1.1",extraEnvironmentVars.https_proxy="2.2.2.2"
+extraEnvironmentVars: {}
+  # http_proxy:
+  # https_proxy:
+  # no_proxy:
+  # ENV_NAME: value
+
+tunnels:
+  # Host endpoints for Azure Functions
+  azure_functions:
+    host: ""
+    port: ""
+  # ACR - Azure Container Registry
+  azure:
+    registryHost: ""
+    registryPort: ""
+  # ECR - Amazon Elastic Container Registry
+  aws:
+    registryHost: ""
+    registryPort: ""
+    type: ""
+    region: ""
+  # GCR - Google Container Registry
+  gcp:
+    registryHost: ""
+    registryPort: ""
+  # JFrog Container Registry
+  jfrog:
+    registryHost: ""
+    registryPort: ""
+  # Onprem Container Registry
+  onprem:
+    registryHost: ""
+    registryPort: ""

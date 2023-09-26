@@ -1,0 +1,17 @@
+{{- if not .Values.windowsEnforcer.allWinNodes.enable }}
+
+{{- if .Values.priorityClass.create }}
+apiVersion: scheduling.k8s.io/v1
+description: Used for Khulnasoft Enforcer to be scheduled with higher priority.
+kind: PriorityClass
+metadata:
+  name: {{ template "priorityClass" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}-ds
+    khulnasoft.component: enforcer
+{{ include "khulnasoft.labels" . | indent 4 }}
+preemptionPolicy: {{ .Values.priorityClass.preemptionPolicy }}
+value: {{ .Values.priorityClass.value }}
+{{- end }}
+{{- end }}

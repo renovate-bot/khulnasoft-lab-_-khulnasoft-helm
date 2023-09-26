@@ -1,0 +1,167 @@
+# Specifies the secret data for imagePullSecrets needed to fetch the private docker images
+imageCredentials:
+  create: false
+  name: khulnasoft-registry-secret # example
+  repositoryUriPrefix: "registry.khulnasoft.com" # for dockerhub - "docker.io"
+  registry: "registry.khulnasoft.com" #REQUIRED only if create is true, for dockerhub - "index.docker.io/v1/"
+  username: ""
+  password: ""
+
+rbac:
+  create: false # Enable to create RBAC for gateway chart, when deploying Gateway only
+
+clusterRole:
+  roleRef: ""
+
+console:
+  publicIP:
+  publicPort:
+
+serviceAccount:
+  annotations: {}
+  create: false
+  name: "khulnasoft-sa"
+
+replicaCount: 1
+logLevel:
+image:
+  repository: gateway
+  tag: "2022.4"
+  pullPolicy: Always
+service:
+  type: ClusterIP     # Enable gateway to external by changing type to "LoadBalancer"
+  loadbalancerIP: "" # Specify loadBalancerIP address for khulnasoft-web in AKS platform
+  loadBalancerSourceRanges:  # Specify loadBalancerSourceRanges addresses if needed (list)
+  labels: {}
+  annotations: {}
+  ports:
+    - name: khulnasoft-gate
+      port: 3622
+      targetPort: 3622
+      nodePort:
+      protocol: TCP
+    - name: khulnasoft-gate-ssl
+      port: 8443
+      targetPort: 8443
+      nodePort:
+      protocol: TCP
+    - name: khulnasoft-health
+      port: 8082
+      protocol: TCP
+      targetPort: 8082
+      nodePort:
+publicIP:
+livenessProbe:
+  httpGet:
+    path: /
+    port: 8082
+  initialDelaySeconds: 60
+  periodSeconds: 30
+readinessProbe:
+  tcpSocket:
+    port: 8443
+  initialDelaySeconds: 60
+  periodSeconds: 60
+resources: {}
+  # Note: For recommendations please check the official sizing guide.
+  # requests:
+  #   cpu: 100m
+  #   memory: 0.2Gi
+  # limits:
+  #   cpu: 1000m
+#   memory: 2Gi
+nodeSelector: {}
+tolerations: []
+affinity: {}
+podAnnotations: {}
+#  my-annotation-key: my value; more value
+podLabels: {}
+securityContext:
+  runAsUser: 11431
+  runAsGroup: 11433
+  fsGroup: 11433
+container_securityContext: {}
+
+pdb:
+  minAvailable: "1"
+# TLS is for enabling mTLS/TLS establishment between gateway <-> server and gateway <-> enforcers
+TLS:
+  enabled: false              # enable to true for secure communication (mTLS/TLS)
+  secretName: ""               # provide certificates secret name created to enable tls/mtls communication between enforcer and gateway/envoy
+  publicKey_fileName: ""       #provide filename of the public key eg: khulnasoft_gateway.crt
+  privateKey_fileName: ""      #provide filename of the private key eg: khulnasoft_gateway.key
+  rootCA_fileName: ""          #provide filename of the rootCA, if using self-signed certificates eg: rootCA.crt
+  khulnasoft_verify_enforcer: "0"    # change it to "1" for enabling mTLS between enforcer and gateway/envoy
+# extraEnvironmentVars is a list of extra environment variables to set in the gateway deployments.
+# https://docs.khulnasoft.com/docs/gateway-optional-variables
+extraEnvironmentVars: {}
+# ENV_NAME: value
+# extraSecretEnvironmentVars is a list of extra environment variables to set in the gateway deployments.
+# These variables take value from existing Secret objects.
+extraSecretEnvironmentVars: []
+  # - envName: ENV_NAME
+  #   secretName: name
+  #   secretKey: key
+
+#enable or disable creation of headless service for envoy
+headlessService: true
+
+
+global:
+  #Please specify k8s platform acronym. Allowed values are aks, eks, gke, openshift, tkg, tkgi, k8s
+  # aks = Azure Kubernetes Service
+  # gke = Google kubernetes Engine
+  # openshift = RedHat Openshift/OCP
+  # tkg = VMware Tanzu kubernetes Grid
+  # tkgi = VMware Tanzu kubernetes Grid Integrated Edition
+  # k8s = Plain/on-prem Vanilla Kubernetes
+  # rancher = Rancher Kubernetes Platform
+  # gs = GaintSwarm platform
+  # k3s = k3s kubernetes platform
+  platform: ""
+  db:
+    external:
+      enabled: true
+      name: ""
+      host: ""
+      port: ""
+      user: ""
+      password: ""
+      auditName: ""
+      auditHost: ""
+      auditPort: ""
+      auditUser: ""
+      auditPassword: ""
+      pubsubName: ""
+      pubsubHost: ""
+      pubsubPort: ""
+      pubsubUser: ""
+      pubsubPassword: ""
+
+    passwordFromSecret:
+      #Enable if loading passwords for db and audit-db from secret
+      enabled: false
+      #Specify the Password Secret name used for db password
+      dbPasswordName: ""
+      #Specify the db password key name stored in the #dbPasswordName secret
+      dbPasswordKey: ""
+      #Specify the Password Secret name used for audit db password
+      dbAuditPasswordName: ""
+      #Specify the audit db password key name stored in the #dbAuditPasswordName secret
+      dbAuditPasswordKey: ""
+      #Specify the Password Secret name used for pubsub db password
+      dbPubsubPasswordName: ""
+      #Specify the pubsub db password key name stored in the #PubsubPasswordName secret
+      dbPubsubPasswordKey: ""
+
+    ssl: false
+    sslmode: require          # accepts: allow | prefer | require | verify-ca | verify-full (Default: Require)
+    auditssl: false
+    auditsslmode: require     # accepts: allow | prefer | require | verify-ca | verify-full (Default: Require)
+    pubsubssl: false
+    pubsubsslmode: require    # accepts: allow | prefer | require | verify-ca | verify-full (Default: Require)
+
+    # To establish mTLS/verify-ca/verify-full with External DB, enable to true and supply dbcerts secret to dcertSecretName
+    externalDbCerts:
+      enable: false
+      certSecretName: ""

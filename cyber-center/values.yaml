@@ -1,0 +1,65 @@
+# Specifies the secret data for imagePullSecrets needed to fetch the private docker images
+imageCredentials:
+  create: false
+  # When create is false please specify
+  name: khulnasoft-registry-secret
+  # for dockerhub - "docker.io"
+  repositoryUriPrefix: "registry.khulnasoft.com"
+  ##REQUIRED only if create is true, for dockerhub - "index.docker.io/v1/"
+  registry: "registry.khulnasoft.com"
+  username: ""
+  password: ""
+
+serviceaccount:
+  # make it to true to create service-account
+  create: false
+  name:
+  annotations: {}
+
+replicaCount: 1
+
+image:
+  # for CC premium change repository to "cc-premium"
+  repository: "cc-standard"
+  tag: "latest"
+  pullPolicy: Always
+
+service:
+  # change to respective service type
+  type: ClusterIP
+  annotations: {}
+  ports:
+    - name: https
+      port: 443
+      targetPort: 5000
+      nodePort:
+      protocol: TCP
+
+resources: {}
+  # Note: For recommendations please check the official sizing guide.
+  # requests:
+  #   cpu: 500m
+  #   memory: 0.5Gi
+  # limits:
+  #   cpu: 2000m
+  #   memory: 2Gi
+
+tolerations: []
+securityContext: {}
+container_securityContext: {}
+podAnnotations: {}
+  #  my-annotation-key: my value; more value
+nodeSelector: {}
+affinity: {}
+
+TLS:
+  # enable to true for secure communication
+  enabled: false
+  # provide certificates secret name created to enable tls/mtls communication between enforcer and gateway/envoy
+  secretName: "khulnasoft-cc-certs"
+  # provide filename of the public key eg: khulnasoft_web.crt
+  publicKey_fileName: ""
+  # provide filename of the private key eg: khulnasoft_web.key
+  privateKey_fileName: ""
+  # provide filename of the rootCA, if using self-signed certificates eg: rootCA.crt
+  rootCA_fileName: ""

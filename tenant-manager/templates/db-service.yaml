@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-tm-db-svc
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}-tm-db
+{{ include "khulnasoft.labels" . | indent 4 }}
+spec:
+  type: {{ .Values.db.service.type }}
+  selector:
+    app: {{ .Release.Name }}-tm-db
+  ports:
+    - port: 5432
+      targetPort: 0

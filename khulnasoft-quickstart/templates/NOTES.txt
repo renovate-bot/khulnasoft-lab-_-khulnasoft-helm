@@ -1,0 +1,14 @@
+
+Thank you for installing Khulnasoft Security Quick Start Chart.
+
+You can take a look on Khulnasoft Documentation
+https://docs.khulnasoft.com/docs
+
+Please remember that this chart can be used only for DEV or POC setups
+and contain the following Khulnasoft components:
+    * Khulnasoft Server
+    * Khulnasoft Gateway
+    * Khulnasoft Database
+    * Khulnasoft Kube Enforcer
+
+Your release is named {{ .Release.Name }}.

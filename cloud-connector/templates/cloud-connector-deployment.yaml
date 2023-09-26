@@ -1,0 +1,121 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Namespace }}-cloud-connector
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Namespace }}-cloud-connector
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Namespace }}-cloud-connector
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/cloud-connector-configmap.yaml") . | sha256sum }}
+      {{- if and (.Values.tolerations) (semverCompare "<1.6-0" .Capabilities.KubeVersion.GitVersion) }}
+        scheduler.alpha.kubernetes.io/tolerations: '{{ toJson .Values.tolerations }}'
+      {{- end }}
+      {{- with .Values.podAnnotations }}
+      {{- range $key,$value := . }}
+        {{ $key }}: {{ $value | quote }}
+      {{- end }}
+      {{- end }}
+      labels:
+        app: {{ .Release.Namespace }}-cloud-connector
+      name: {{ .Release.Namespace }}-cloud-connector
+      namespace: {{ .Release.Namespace }}
+    spec:
+      {{- with .Values.securityContext }}
+      securityContext:
+{{ toYaml . | indent 8 }}
+      {{- end }}
+      serviceAccountName: {{ .Values.serviceaccount.name }}
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      containers:
+      - name: {{ .Release.Namespace }}-cloud-connector
+        {{- with .Values.container_securityContext }}
+        securityContext:
+{{ toYaml . | indent 10 }}
+        {{- end }}
+        image: "{{ .Values.imageCredentials.repositoryUriPrefix }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        envFrom:
+        - configMapRef:
+            name: {{ .Release.Namespace }}-cloud-connector-configmap
+        env:
+        {{- if .Values.authType.userCreds }}
+        - name: AQUA_CLOUD_CONNECTOR_USERNAME
+          valueFrom:
+            secretKeyRef:
+              {{- if .Values.userCredsFromSecret.enable }}
+              key: {{ .Values.userCredsFromSecret.userkey }}
+              name: {{ .Values.userCredsFromSecret.secretName }}
+              {{- else }}
+              key: username
+              name: {{ .Release.Name }}-user-secret
+              {{- end }}
+        - name: AQUA_CLOUD_CONNECTOR_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              {{- if .Values.userCredsFromSecret.enable }}
+              key: {{ .Values.userCredsFromSecret.userkey }}
+              name: {{ .Values.userCredsFromSecret.secretName }}
+              {{- else }}
+              key: password
+              name: {{ .Release.Name }}-user-secret
+              {{- end }}
+        {{- end }}
+        {{- if .Values.authType.tokenAuth }}
+        - name: AQUA_CLOUD_CONNECTOR_TOKEN
+          valueFrom:
+            secretKeyRef:
+              {{- if .Values.tokenFromSecret.enable }}
+              key: {{ .Values.tokenFromSecret.tokenKey }}
+              name: {{ .Values.tokenFromSecret.secretName }}
+              {{- else }}
+              key: token
+              name: {{ .Release.Name }}-token-secret
+              {{- end }}
+        {{- end }}
+        {{- include "extraEnvironmentVars" .Values | nindent 8 }}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        volumeMounts:
+          - name: config
+            mountPath: /etc/config
+{{- with .Values.livenessProbe }}
+        livenessProbe:
+{{ toYaml . | indent 10 }}
+{{- end }}
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ .Release.Namespace }}-tunnels-cloud-connector-conf
+            items:
+              - path: connector.yaml
+                key: khulnasoft-tunnels-cloud-connector-config
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{ toYaml . | indent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

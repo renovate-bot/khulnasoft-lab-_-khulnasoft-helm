@@ -1,0 +1,9 @@
+apiVersion: v2
+name: codesec-agent
+description: A Helm chart for Khulnasoft supply chain security
+version: "1.2.6"
+icon: https://avatars3.githubusercontent.com/u/12783832?s=200&v=4
+home: https://www.khulnasoft.com
+maintainers:
+  - name: Khulnasoft Security, Inc.
+    email: support@khulnasoft.com

@@ -1,0 +1,421 @@
+# Specifies the secret data for imagePullSecrets needed to fetch the private docker images
+imageCredentials:
+  create: true
+  name: khulnasoft-registry-secret # example
+  repositoryUriPrefix: "registry.khulnasoft.com" # for dockerhub - "docker.io"
+  registry: "registry.khulnasoft.com" #REQUIRED only if create is true, for dockerhub - "index.docker.io/v1/"
+  username: ""
+  password: ""
+
+rbac:
+  enabled: true
+  privileged: true
+  roleRef:
+
+#Please specify k8s platform acronym. Allowed values are aks, eks, gke, openshift, tkg, tkgi, k8s
+# aks = Azure Kubernetes Service
+# gke = Google kubernetes Engine
+# openshift = RedHat Openshift/OCP
+# tkg = VMware Tanzu kubernetes Grid
+# tkgi = VMware Tanzu kubernetes Grid Integrated Edition
+# k8s = Plain/on-prem Vanilla Kubernetes
+# rancher = Rancher Kubernetes Platform
+# gs = GaintSwarm platform
+# k3s = k3s kubernetes platform
+platform: "k8s"
+
+# enable only one of the modes
+clustermode: 
+activeactive:
+
+serviceaccount:
+  annotations: {}
+
+admin:
+  token:
+  password:
+
+dockerSock:
+  mount: # put true for mount docker socket.
+  path: /var/run/docker.sock # pks - /var/vcap/data/sys/run/docker/docker.sock
+
+ke:
+  managed: false
+  environment: aws # aws, acs, onprem
+  khulnasoft_enable_cache: yes
+  khulnasoft_cache_expiration_period: 60
+  clusterName: "Default-cluster-name"   # Display a custom cluster name in the infrastructure tab of Khulnasoft Enterprise
+  logicalName: ""
+  logLevel: ""
+  securityContext:
+    runAsUser: 11431
+    runAsGroup: 11433
+    fsGroup: 11433
+  container_securityContext: {}
+  image:
+    repository: kube-enforcer
+    tag: "2022.4"
+    pullPolicy: Always
+  nameOverride: "khulnasoft-kube-enforcer"
+  fullnameOverride: "khulnasoft-kube-enforcer"
+  certsSecret:
+    name: khulnasoft-kube-enforcer-certs
+    serverCertificate: "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCakNDQWU2Z0F3SUJBZ0lVSUxzd2FuZWRSOURFK1Zyczc5U3Q5UTUwTjVRd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0Z6RVZNQk1HQTFVRUF3d01ZV1J0YVhOemFXOXVYMk5oTUNBWERUSXdNRGd5TnpBNU5EZzFNbG9ZRHpJeQpPVFF3TmpFeU1EazBPRFV5V2pBbU1TUXdJZ1lEVlFRRERCdGhjWFZoTFd0MVltVXRaVzVtYjNKalpYSXVZWEYxCllTNXpkbU13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLQW9JQkFRRFR5RSt3eEFxSFl5QjQKOWZBWXF5bVlwTWJ5Q3VOc1IxWTZ0Tk5BYnNWTTZOMjI0eVpnZWN3T1kvS0lsWDV2Y1VsZjNSQjhPNWNYakFPUgo3SzQwenJ6KzRBa1BRbkRyWmJhcGNTcDhzU1pSYk9HdVdOZ2laeGM1QmVmVFJhRnFoUWR2aDNjMExEeVRyQm8yCmwvRUFEY0JKcmZIaDZZUzBnbHorNC9ZOGljYnRqd0gzbVliNGZ4QXdIaWRqYm1aOEowdncxY3BRZm1mN1Q2NGUKN0hvRTRFK3JxcEhVOC9yVXFiQStHRzZMV3Q1aVVSZElPejRKQktpYVd4bVFvK0VLK1Q5aDcxd3pVVjY1c0dLbwpMdmV3bHVPd1Z3ajA2NTNUVnIxREpRVXd4RHovK2lUR0hPSVowOWhJNno4QjVNbzh0eHlSRFlESUJnRnRvUjNpCjFCbTBPWUkxQWdNQkFBR2pPVEEzTUFrR0ExVWRFd1FDTUFBd0N3WURWUjBQQkFRREFnWGdNQjBHQTFVZEpRUVcKTUJRR0NDc0dBUVVGQndNQ0JnZ3JCZ0VGQlFjREFUQU5CZ2txaGtpRzl3MEJBUXNGQUFPQ0FRRUFKZFZSMXRGNApHb3dYUkhNbTFFUWRMS3BkcklXTUZVUFdIQllHamNJRXdVbzdWc0djZEEzMG5ldUx5Zk5wOFUzQjlSMDFTTzY3CnNWb0RURE5WMnk0U3dQTGFMRVBGMWptWVcrY3NGb09KZFlxMmN1WjVwWjJUdnRsV2hvTGtuSUt6YUh1Z29uS0cKWUhYbDRxS3MwR1I1bDNreVRhVGhwVkJQS05JNGhsL1RNeEVYQ1dxT0Y0RXJ6U3lYK3ltbTN5TzkwdUxtazlDNwoxU0t3YkV4SU41bnAzaGYwODhFZ0hBRTJKWkhzRHNnbkx5d0dMRlhtcldsQnVaSkpSZVk5Wkljb0VQK3dRUWRrClpack9oSnlKbGpVQnlTTE51cWxxNyswUnFvVGN1ZnE0MDhuUDJhNFdyU2VzcU5ud0MzVzQzNjA2RVVMbXdZZUgKWFRDVThTb0loeWVvUVE9PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg=="
+    serverKey: "LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcEFJQkFBS0NBUUVBMDhoUHNNUUtoMk1nZVBYd0dLc3BtS1RHOGdyamJFZFdPclRUUUc3RlRPamR0dU1tCllIbk1EbVB5aUpWK2IzRkpYOTBRZkR1WEY0d0RrZXl1Tk02OC91QUpEMEp3NjJXMnFYRXFmTEVtVVd6aHJsalkKSW1jWE9RWG4wMFdoYW9VSGI0ZDNOQ3c4azZ3YU5wZnhBQTNBU2EzeDRlbUV0SUpjL3VQMlBJbkc3WThCOTVtRworSDhRTUI0blkyNW1mQ2RMOE5YS1VINW4rMCt1SHV4NkJPQlBxNnFSMVBQNjFLbXdQaGh1aTFyZVlsRVhTRHMrCkNRU29tbHNaa0tQaEN2ay9ZZTljTTFGZXViQmlxQzczc0pianNGY0k5T3VkMDFhOVF5VUZNTVE4Ly9va3hoemkKR2RQWVNPcy9BZVRLUExjY2tRMkF5QVlCYmFFZDR0UVp0RG1DTlFJREFRQUJBb0lCQVFDbHZLVmcySXJFMlRhWQpjeCtxcm9pbkJJME03cWg4SEhmSENhd3BTSWJ2WVczaHFuSm1IZXNyZDl4ZU4xL3pKdDBkUUl1ZUxhUllzU0k2CkdOZGNURTVyeURoTzBOZzk0Q1BMQnQwUktER3NsMkVtYUREOCsyQ1pKNTM5SVFqcHE2SGVEazJqYnRzWlZoNU4KaXlyM3Q4czczZnpscHpKTGNab0ZmN0U4UHphR3dXOGw2Q2MyTzkxeUZsTEhwcHR5bzlzWngxVHoyTXZIZ0ZZdApDQmIxdHdkdjB3a2tFNXlwTXdKSU9tMzk0RkpZL2d4dytIdDRDR2IvcHhLVnVTRFZBWHl3T0J1VDZMUVJpSDFOCkcyU3J4THhRbjRPWnBhQ2RHL3NGUjZlVzlKbmVlUFhBMlRiRlVKVTZCbjVGM1l0aXVReFo2YVZKb3RPU1phb1YKQVR3RWErUWhBb0dCQVBNK3pWQVU0RWduZWNPZmR0UTQ2NDJWeUJIWWxIV1VwWHd4SFk3UTFiREVsRDRIcngybApEMHVFWXJodkNvT0lIakg2RmhOdkZxME11bHlTajVTVVVZaWpadnIzNWg5WWhLaTE4bzJhMVV1YlErWkpGT1ZnCnFaUTgwM2RDVllXalkyeEMxeGhaUVIrQVVJYkY1N1BpQUNCbTFuRkJhUXRIN3NIL2hJNmxtbXV6QW9HQkFON2oKS3hzUXBjQkI0b25ld1F5dm5FOFVLY3gxU2lTMmpBUzlZVlBCSzBKRWc2ZVZEOVRiTUprUExlbm1hanF6ZHFIVApmY3E1TjJ2WENBZVBjMndqYlRTNEhxbWJqV09XRHA5SXVVK1RJanBCdlNSaDYyOEFJVndoYXlxQ1czY1l4V3RiCk9nS2ZNWmlWL2lXMFVwMHpoUjJJWWh4VDBlSnZYU200aHhVbXg4WjNBb0dBVW9YcDdkTkhTL05va2YrVnR1WWcKdEFZdXZDODRIclB4ZUxMSkRseTNRcU5PajhUWG1qMFhkVTFTbUxQRFkyQllyaWZrT1cra3g4emJwUEJzR2NJLwo3eFZRcUxCVnVDaTF5TzhCZlIwY1krd25Hd2VNT1UyVCtxQ3dOWE9oeEJic2Nod3pFU1dtdkdNeDdxZFJ0bXRrCkU1b1FBcGhvWk5WZ29SeHBBbVFZZ1pVQ2dZRUF1bmhaZnRvdG9hdzlSOVVwczJCVUtFQ1pPNm5BN3ZnZUtuVDYKTVNVQitQM3pHMGYxSjhKOVpRQXpER1d0NkJCdXByS1dvZnpVNWc3UGMrdkt4K1RYbjJ5T2twMUY2OVFGeGJNRQovaEw5WnJuSzhONVBKdDE0QzJrV0RFbGxGajJPSk9QOG8yYm1DbDhxY2dicnV3TDRVaDNnM3d3dEl3RENjMzRpCjNVcEZocjhDZ1lBNkhRYXdrZWprd29JL2x4cmk1MkwrLzduOTQ5UFFVdEVBNlpvaVo1VXpnK2hGeVpjK0dWZTcKQklQVzdpSldib2tkVEU1N21mL1l2RTFUZ3hhaVlzVjAxRklKNk1MUFo2eEcyMEpuaWMzSVpJL2VQbERNSnZFaAowUVFON0d4c3NBTUE1MWk3WTkrdVFBYklMSTBiTGpaOVBKT1RrUDdaODR5RGxWcDZsb1hXOVE9PQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo="
+  khulnasoftSecret:
+    name: khulnasoft-kube-enforcer-token
+    kubeEnforcerToken: token-ke
+  serviceAccount:
+    name: khulnasoft-kube-enforcer-sa
+  clusterRole:
+    name: khulnasoft-kube-enforcer
+  clusterRoleBinding:
+    name: khulnasoft-kube-enforcer  
+  role:
+    name: khulnasoft-kube-enforcer
+  roleBinding:
+    name: khulnasoft-kube-enforcer 
+  webhooks:
+    caBundle: "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURFVENDQWZtZ0F3SUJBZ0lVTkljWmkzL2xqbEtObFZ0WXBwVyttN2xWZnNVd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0Z6RVZNQk1HQTFVRUF3d01ZV1J0YVhOemFXOXVYMk5oTUNBWERUSXdNRGd5TnpBNU5EZ3dNMW9ZRHpJeQpPVFF3TmpFeU1EazBPREF6V2pBWE1SVXdFd1lEVlFRRERBeGhaRzFwYzNOcGIyNWZZMkV3Z2dFaU1BMEdDU3FHClNJYjNEUUVCQVFVQUE0SUJEd0F3Z2dFS0FvSUJBUURZSlovRmRjVUtDdmdqSHlVVnhxWitRTTBRLzNGYzQyTzkKUGlXTllGS2l3L1FJTUIxTHZpQklXSFQyVEZLRkVYYUtZcmdzTHE0MElFZWMyN2Jvd2RTbXJVZEV3bEdtNkQrMQpIaGROQWI4WEllWTNteEpUUlR2cVhzYitrUnptYjJCL2xRVVlLNFJxaW8vN2RyZjFEYjBwWEFYVmxzRFNvQUhoCkxUWUxXbmhldGNLTUEvT3FCQXBoaWM4VzZZN1VJY2FtWnVZZUMxOVBlMlZKSHFxZ3o5MDNybjFGTnNMWnA4Q00Kb0dXeENEU0RFSWRuTmMxVis1WUg4VmxLRk9wb2IxYWtIZFFPeVlROFVPR2hnMHh3YXNGMnRRc2RCQ3BTUFBNYwo3K01kWnF0c2dtVGJQaUN6bWRra25uWWZ4cmxsWVVmOGFCelBrMzhyQ2ZiMnF5ZHJLTGZSQWdNQkFBR2pVekJSCk1CMEdBMVVkRGdRV0JCVDlDWlVURzRtQThrYzBISEJsamhRZUxKWjZoekFmQmdOVkhTTUVHREFXZ0JUOUNaVVQKRzRtQThrYzBISEJsamhRZUxKWjZoekFQQmdOVkhSTUJBZjhFQlRBREFRSC9NQTBHQ1NxR1NJYjNEUUVCQ3dVQQpBNElCQVFDUE5Ick5rcTBpN2tpMnNGcUtWa3l0RGpRWTFzaVNRcjNsbXVweDlVL1FuaytBQ2huYUhjNDVqSFVTCi9JdmNWMnljQVZ1aUQ3eFJXWkdYVzRuRE14QjdBZ0RKWmhJd3hGTVl1bVpGZEtCUlBLKy9WY3ZFTFFoZ3Z6T0QKNWhvNHZ0RzlHTzBDUzhqNUtGZ3pWaDgxcmsyU2c1RDN6TGVISjVVNDVRK2xlRGtldXJmMzFqQWJsMU1vai9JWgpndVUyd1Y5RkJJaFZONTMwd1Y4b01oWnVZRWZvUmZhOEpIbXhTMmNNbHUxQWZ5YmZkcFB2cCtpUHZKc0t2UTgzCmdueEd4K1k5NldzL0pmWDlXSFpBT1kyQXVVYS9hUjZLSnVraG9KVTk2Z3p5VXd0eFV5aWExdDg5M0hZNmQ3bG0KU1BmaVEzWm40dXdxaEczMUhGSmZMMG5iSmlxZQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg=="
+    failurePolicy: Ignore
+    validatingWebhook:
+      name: kube-enforcer-admission-hook-config
+    mutatingWebhook:
+      name: kube-enforcer-me-injection-hook-config
+
+starboard:
+  enabled: "true"
+  appName: "starboard-operator"
+  serviceAccount:
+    name: "starboard-operator"
+  clusterRoleBinding:
+    name: "starboard-operator"
+  clusterRole:
+    name: "starboard-operator"
+  automountServiceAccountToken: "true"
+  securityContext: {}
+  image:
+    repositoryUriPrefix: "docker.io/khulnasoft"
+    repository: "starboard-operator"
+    tag: "0.13.0"
+    pullPolicy: Always
+  container_securityContext:
+    privileged: false
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+  OPERATOR_NAMESPACE: "khulnasoft"
+  OPERATOR_TARGET_NAMESPACES: ""
+  OPERATOR_LOG_DEV_MODE: "false"
+  OPERATOR_CONCURRENT_SCAN_JOBS_LIMIT: "10"
+  OPERATOR_SCAN_JOB_RETRY_AFTER: "30s"
+  OPERATOR_METRICS_BIND_ADDRESS: ":8080"
+  OPERATOR_HEALTH_PROBE_BIND_ADDRESS: ":9090"
+  OPERATOR_CIS_KUBERNETES_BENCHMARK_ENABLED: "false"
+  OPERATOR_VULNERABILITY_SCANNER_ENABLED: "false"
+  OPERATOR_BATCH_DELETE_LIMIT: "10"
+  OPERATOR_BATCH_DELETE_DELAY: "10s"
+
+  conftest_resources_requests_cpu: "1m"
+  conftest_resources_requests_memory: "10M"
+  conftest_resources_limits_cpu: "15m"
+  conftest_resources_limits_memory: "40M"
+
+  ports:
+    metricContainerPort: 8080
+    probeCntainerPort: 9090
+  readinessProbe:
+    httpGet:
+      path: /readyz/
+      port: probes
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  livenessProbe:
+    httpGet:
+      path: /healthz/
+      port: probes
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 10
+
+db:
+  external:
+    enabled: false
+    name: ""
+    host: ""
+    port: ""
+    user: ""
+    password: ""
+    auditName: ""
+    auditHost: ""
+    auditPort: ""
+    auditUser: ""
+    auditPassword: ""
+    pubsubName: ""
+    pubsubHost: ""
+    pubsubPort: ""
+    pubsubUser: ""
+    pubsubPassword: ""
+  passwordFromSecret:
+    enabled: false              #Enable if loading passwords for db and audit-db from secret
+    dbPasswordName: ""            #Specify the Password Secret name used for db password
+    dbPasswordKey: ""             #Specify the db password key name stored in the #dbPasswordName secret
+    dbAuditPasswordName: ""          #Specify the Password Secret name used for audit db password
+    dbAuditPasswordKey: ""            #Specify the audit db password key name stored in the #dbAuditPasswordName secret
+    dbPubsubPasswordName: ""            #Specify the Password Secret name used for pubsub db password
+    dbPubsubPasswordKey: ""           #Specify the pubsub db password key name stored in the #PubsubPasswordName secret
+  ssl: false
+  auditssl: false
+  pubsubssl: false
+  securityContext:
+    runAsUser: 70
+    runAsGroup: 70
+    fsGroup: 11433
+  container_securityContext:
+    privileged: false
+  image:
+    repository: database
+    tag: "2022.4"
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+  persistence:
+    enabled: true
+    storageClass:
+    size: 30Gi
+    accessMode: ReadWriteOnce
+  livenessProbe:
+    exec:
+      command:
+      - sh
+      - -c
+      - exec pg_isready --host $POD_IP
+    initialDelaySeconds: 60
+    timeoutSeconds: 5
+    failureThreshold: 6
+  readinessProbe:
+    exec:
+      command:
+      - sh
+      - -c
+      - exec pg_isready --host $POD_IP
+    initialDelaySeconds: 5
+    timeoutSeconds: 3
+    periodSeconds: 5
+  resources: {}
+    # Note: For recommendations please check the official sizing guide.
+    # requests:
+    #   cpu: 3000m
+    #   memory: 6Gi
+    # limits:
+    #   cpu: 12000m
+    #   memory: 20Gi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podAnnotations: {}
+  #  my-annotation-key: my value; more value
+
+  # extraEnvironmentVars is a list of extra environment variables to set in the database deployments.
+  extraEnvironmentVars: {}
+    # ENV_NAME: value
+
+  # extraSecretEnvironmentVars is a list of extra environment variables to set in the database deployments.
+  # These variables take value from existing Secret objects.
+  extraSecretEnvironmentVars: []
+    # - envName: ENV_NAME
+    #   secretName: name
+    #   secretKey: key
+
+gate:
+  replicaCount: 1
+  logLevel:
+  image:
+    repository: gateway
+    tag: "2022.4"
+    pullPolicy: Always
+  service:
+    type: LoadBalancer     # you can enable gateway to external by changing type to "LoadBalancer"
+    loadbalancerIP: "" # Specify loadBalancerIP address for khulnasoft-web in AKS platform
+    annotations: {}
+    ports:
+      - name: khulnasoft-gate
+        port: 3622
+        targetPort: 3622
+        nodePort:
+        protocol: TCP
+      - name: khulnasoft-gate-ssl
+        port: 8443
+        targetPort: 8443
+        nodePort:
+        protocol: TCP
+      - name: khulnasoft-health
+        port: 8082
+        protocol: TCP
+        targetPort: 8082
+        nodePort:
+  publicIP:
+  livenessProbe:
+    httpGet:
+      path: /
+      port: 8082
+    initialDelaySeconds: 60
+    periodSeconds: 30
+  readinessProbe:
+    tcpSocket:
+      port: 8443
+    initialDelaySeconds: 60
+    periodSeconds: 60
+  resources: {}
+    # Note: For recommendations please check the official sizing guide.
+    # requests:
+    #   cpu: 1500m
+    #   memory: 7Gi
+    # limits:
+    #   cpu: 6000m
+    #   memory: 10Gi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podAnnotations: {}
+  #  my-annotation-key: my value; more value
+
+  securityContext:
+    runAsUser: 11431
+    runAsGroup: 11433
+    fsGroup: 11433
+  container_securityContext: {}
+
+  # TLS is for enabling mTLS/TLS establishment between gateway <-> server and gateway <-> enforcers
+  TLS:
+    enabled: false              # enable to true for secure communication (mTLS/TLS)
+    secretName: ""               # provide certificates secret name created to enable tls/mtls communication between enforcer and gateway/envoy
+    publicKey_fileName: ""       #provide filename of the public key eg: khulnasoft_gateway.crt
+    privateKey_fileName: ""      #provide filename of the private key eg: khulnasoft_gateway.key
+    rootCA_fileName: ""          #provide filename of the rootCA, if using self-signed certificates eg: rootCA.crt
+    khulnasoft_verify_enforcer: "0"    # change it to "1" for enabling mTLS between enforcer and gateway/envoy
+
+  # extraEnvironmentVars is a list of extra environment variables to set in the gateway deployments.
+  # https://docs.khulnasoft.com/docs/gateway-optional-variables
+  extraEnvironmentVars: {}
+    # ENV_NAME: value
+
+  # extraSecretEnvironmentVars is a list of extra environment variables to set in the gateway deployments.
+  # These variables take value from existing Secret objects.
+  extraSecretEnvironmentVars: []
+    # - envName: ENV_NAME
+    #   secretName: name
+    #   secretKey: key
+
+web:
+  replicaCount: 1
+  logLevel:
+  image:
+    repository: console
+    tag: "2022.4"
+    pullPolicy: Always
+  service:
+    type: LoadBalancer
+    loadbalancerIP: "" # Specify loadBalancerIP address for khulnasoft-gateway in AKS platform
+    annotations: {}
+    ports:
+      - name: khulnasoft-web
+        port: 8080
+        targetPort: 8080
+        nodePort:
+        protocol: TCP
+      - name: khulnasoft-web-ssl
+        port: 443
+        targetPort: 8443
+        nodePort:
+        protocol: TCP
+    #As 443, 8443 already occupied in k3s kubernetes by traefik ingress. below are the console ports
+    k3sPorts:
+      - name: khulnasoft-web
+        port: 8080
+        targetPort: 8080
+        nodePort:
+        protocol: TCP
+      - name: khulnasoft-web-ssl
+        port: 444
+        targetPort: 8443
+        nodePort:
+        protocol: TCP
+  ingress:
+    enabled: false
+    externalPort:
+    annotations: {}
+    #  kubernetes.io/ingress.class: nginx
+    hosts: #REQUIRED
+    # - khulnasoft-test.example.com
+    path: /
+    pathType: Prefix
+    tls: []
+    #  - secretName: khulnasoft-tls
+    #    hosts:
+    #      - khulnasoft.domain.com
+
+  # Note: Please change the ports according to the requirement.
+  # default liveness and readiness probe
+  livenessProbe:
+    httpGet:
+      path: /
+      port: 8080
+    initialDelaySeconds: 60
+    periodSeconds: 30
+
+  readinessProbe:
+    httpGet:
+      path: /
+      port: 8080
+    initialDelaySeconds: 60
+    periodSeconds: 30
+
+  resources: {}
+    # Note: For recommendations please check the official sizing guide.
+    # requests:
+    #   cpu: 2000m
+    #   memory: 3Gi
+    # limits:
+    #   cpu: 6000m
+    #   memory: 10Gi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podAnnotations: {}
+  #  my-annotation-key: my value; more value
+
+  securityContext:
+    runAsUser: 11431
+    runAsGroup: 11433
+    fsGroup: 11433
+  container_securityContext: {}
+
+  # TLS is for enabling mTLS/TLS establishment between server <-> gateway and https for khulnasoft console
+  TLS:
+    enabled: false              # enable to true for secure communication
+    secretName: ""              # provide certificates secret name created to enable tls/mtls communication between enforcer and gateway/envoy
+    publicKey_fileName: ""      #provide filename of the public key eg: khulnasoft_web.crt
+    privateKey_fileName: ""     #provide filename of the private key eg: khulnasoft_web.key
+    rootCA_fileName: ""         #provide filename of the rootCA, if using self-signed certificates eg: rootCA.crt
+
+  maintenance_db:
+    name: ""         #specify the AQUA_MAINTENANCE_DB name if enabled
+
+  # extraEnvironmentVars is a list of extra environment variables to set in the web deployments.
+  # https://docs.khulnasoft.com/docs/server-optional-variables
+  extraEnvironmentVars: {}
+    # ENV_NAME: value
+
+  # extraSecretEnvironmentVars is a list of extra environment variables to set in the web deployments.
+  # These variables take value from existing Secret objects.
+  extraSecretEnvironmentVars: []
+    # - envName: ENV_NAME
+    #   secretName: name
+    #   secretKey: key
+

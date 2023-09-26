@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+    ingress.kubernetes.io/add-base-url: "true"
+  name: khulnasoft-console
+  namespace: khulnasoft
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: khulnasoft-console-svc
+          servicePort: 8080
+        path: /
+        pathType: Prefix
+status:
+  loadBalancer:
+    ingress:
+    - ip: 192.168.27.100
