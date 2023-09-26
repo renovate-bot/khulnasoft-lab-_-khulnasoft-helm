@@ -1,5 +1,3 @@
-<img src="https://avatars3.githubusercontent.com/u/12783832?s=200&v=4" height="100" width="100" /><img src="https://avatars3.githubusercontent.com/u/15859888?s=200&v=4" width="100" height="100"/>
-
 # Overview
 
 This page contains instructions for deploying Khulnasoft Enterprise in a Kubernetes cluster, using the [Helm package manager](https://helm.sh/).
